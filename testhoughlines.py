@@ -7,7 +7,7 @@ import numpy as np
 # which operations are to be done.
 # Make sure that the image is in the same
 # directory in which this python program is
-img = cv2.imread('images/Screen Shot 2023-03-03 at 8.24.22 AM.png')
+img = cv2.imread('images/Screenshot 2023-02-24 162147.jpg')
 
 # Convert the img to grayscale
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -15,7 +15,7 @@ gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 # Apply edge detection method on the image
 edges = cv2.Canny(gray, 50, 150, apertureSize=3)
 # This returns an array of r and theta values
-lines = cv2.HoughLines(edges, 1, np.pi/180, 200)
+lines = cv2.HoughLines(edges, 0, np.pi/180, 200)
 
 # The below for loop runs till r and theta values
 # are in the range of the 2d array

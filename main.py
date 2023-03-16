@@ -12,6 +12,7 @@ def find_center_of_parallel_lines(img):
     lines = cv2.HoughLines(edges, 1, np.pi/180, 200)
 
     # Identify the two parallel lines
+    #SOMETHING WRONG WITH THE PARALLEL CHECK
     parallel_lines = []
     for line1 in lines:
         for line2 in lines:
@@ -23,6 +24,7 @@ def find_center_of_parallel_lines(img):
 
     # Check if there are no parallel lines or multiple pairs of parallel lines
     if len(parallel_lines) != 1:
+        print("lines")
         return img
 
     # Compute the center of the two parallel lines
@@ -44,7 +46,7 @@ def find_center_of_parallel_lines(img):
     return img
 
 # Load the image
-img = cv2.imread("images/paint-test.jpg")
+img = cv2.imread("images/weener.JPG")
 
 # Find the center of parallel lines
 result = find_center_of_parallel_lines(img)

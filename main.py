@@ -46,7 +46,7 @@ def find_center_of_parallel_lines(img):
     return img
 
 # Load the image
-img = cv2.imread("images/weener.JPG")
+img = cv2.imread("images/IMG-7958.jpg")
 
 # Find the center of parallel lines
 result = find_center_of_parallel_lines(img)

@@ -25,7 +25,7 @@ if lines is not None:
     print(x1, x2, y1, y2)
     # Find the slope of one of the lines
     m = (y2 - y1) / (x2 - x1)
-    # Find the y-intercept of one of the lines using the center point as input to determine the y-intercept of the
+    # Find the y-intercept of the center line using the center point as input to determine the y-intercept of the
     # center line since they are parallel. Parallel means same slope different y-intercept.
     c = center_y - (m * center_x)
     # Find the final y values of the two center line points

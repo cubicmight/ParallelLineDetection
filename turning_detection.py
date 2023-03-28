@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
-
+####https://docs.opencv.org/3.4/da/ddc/tutorial_generalized_hough_ballard_guil.html
 # Load the image
-img = cv2.imread('turning_pictures/turning_second_picture.png')
+img = cv2.imread('turning_pictures/turning_third_picture.png')
 
 # Convert the image to grayscale
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -11,7 +11,7 @@ gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 edges = cv2.Canny(gray, 50, 150, apertureSize=3)
 
 # Apply HoughLinesP transform to detect lines
-lines = cv2.HoughLinesP(edges, rho=1, theta=np.pi / 180, threshold=30, minLineLength=0, maxLineGap=50)
+lines = cv2.HoughLinesP(edges, rho=1, theta=np.pi / 180, threshold=30, minLineLength=500, maxLineGap=50)
 
 # Maths :(
 if lines is not None:
@@ -45,6 +45,7 @@ if lines is not None:
     cv2.circle(img, (center_x, center_y), 5, (0, 0, 255), -1)
     cv2.line(img, p1, p2, (255, 0, 255), 2)
     cv2.arrowedLine(img, pa1, pa2, (0, 0, 255), 10)
+    cv2.circle(img, (0, 50), 30, (0, 0, 255), -1)
 
 # Draw the detected lines on the image
 if lines is not None:

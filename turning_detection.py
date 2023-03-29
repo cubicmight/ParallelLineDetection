@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 ####https://docs.opencv.org/3.4/da/ddc/tutorial_generalized_hough_ballard_guil.html
 # Load the image
-img = cv2.imread('turning_pictures/turning_third_picture.png')
+img = cv2.imread('turning_pictures/turning_curved_3.png')
 
 # Convert the image to grayscale
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

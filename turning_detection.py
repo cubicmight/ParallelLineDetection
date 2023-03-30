@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # Load the image
-img = cv2.imread('turning_pictures/turning_curved_3.png')
+img = cv2.imread('turning_pictures/draw.io_curved_image_1.png')
 
 # Convert the image to grayscale
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -11,7 +11,7 @@ gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 edges = cv2.Canny(gray, 50, 150, apertureSize=3)
 
 # Apply HoughLinesP transform to detect lines
-lines = cv2.HoughLinesP(edges, rho=1, theta=np.pi / 180, threshold=30, minLineLength=20, maxLineGap=10)
+lines = cv2.HoughLinesP(edges, rho=1, theta=np.pi / 180, threshold=30, minLineLength=0, maxLineGap=50)
 
 if lines is not None:
     # Create empty arrays to store the endpoints of the left and right curves

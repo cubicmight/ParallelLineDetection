@@ -17,7 +17,7 @@ lines = cv2.HoughLinesP(
     edges,  # Input edge image
     1,  # Distance resolution in pixels
     np.pi / 180,  # Angle resolution in radians
-    threshold=10,  # Min number of votes for valid line
+    threshold=0,  # Min number of votes for valid line
     minLineLength=0,  # Min allowed length of line
     maxLineGap=10  # Max allowed gap between line for joining them
 )
@@ -40,13 +40,13 @@ center_y = int((y1 + y2 + y3 + y4) / 4)
 print("Center line coordinate point 1: ({}, {})".format(center_x, center_y))
 print(x1, x2, y1, y2)
 cv2.circle(image, (center_x, center_y), 5, (0, 0, 255), -1)
-x12, y12, x22, y22 = longest_lines[4][0]
-x32, y32, x42, y42 = longest_lines[5][0]
-center_x2 = int((x12 + x22 + x32 + x42) / 4)
-center_y2 = int((y12 + y22 + y32 + y42) / 4)
-print("Center line coordinate point 2: ({}, {})".format(center_x2, center_y2))
-print(x12, x22, y12, y22)
-cv2.circle(image, (center_x2, center_y2), 5, (0, 0, 255), -1)
+# x12, y12, x22, y22 = longest_lines[4][0]
+# x32, y32, x42, y42 = longest_lines[5][0]
+# center_x2 = int((x12 + x22 + x32 + x42) / 4)
+# center_y2 = int((y12 + y22 + y32 + y42) / 4)
+# print("Center line coordinate point 2: ({}, {})".format(center_x2, center_y2))
+# print(x12, x22, y12, y22)
+# cv2.circle(image, (671, center_y2), 5, (0, 0, 255), -1)
 
 
 cv2.imshow("Image", image)

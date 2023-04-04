@@ -2,7 +2,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-image = cv2.imread("turning_pictures/draw.io_curved_image_1.png")
+image = cv2.imread("turning_pictures/working_curved_images/notability_image2.jfif")
 # convert to RGB
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 # convert to grayscale
@@ -16,7 +16,8 @@ image = cv2.drawContours(image, contours, -1, (0, 255, 0), 2)
 a1 = contours[0][:, 0]
 a2 = contours[1][:, 0]
 
-def interpolate(a1, a2, poly_deg=8, n_points=100, plot=True):
+
+def interpolate(a1, a2, poly_deg=20, n_points=100, plot=True):
 
     min_a1_x, max_a1_x = min(a1[:,0]), max(a1[:,0])
     new_a1_x = np.linspace(min_a1_x, max_a1_x, n_points)
@@ -32,15 +33,10 @@ def interpolate(a1, a2, poly_deg=8, n_points=100, plot=True):
     midy = [np.mean([new_a1_y[i], new_a2_y[i]]) for i in range(n_points)]
 
     if plot:
-        plt.plot(a1[:,0], a1[:,1],c='black')
-        plt.plot(a2[:,0], a2[:,1],c='black')
         plt.plot(midx, midy, '--', c='black')
-        plt.show()
 
     return np.array([[x, y] for x, y in zip(midx, midy)])
 
 interpolate(a1, a2)
-
-
 plt.imshow(image)
 plt.show()

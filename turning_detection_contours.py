@@ -12,7 +12,7 @@ _, binary = cv2.threshold(gray, 225, 255, cv2.THRESH_BINARY_INV)
 # find the contours from the thresholded image
 contours, hierarchy = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-# # get the bounding rectangles of the top and bottom contours
+# # get the boundinge rectangles of the top and bottom contours
 # bounding_rects = [cv2.boundingRect(c) for c in contours]
 # # sort the bounding rectangles from left to right
 # bounding_rects = sorted(bounding_rects, key=lambda x: x[0])

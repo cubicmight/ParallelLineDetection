@@ -2,7 +2,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-image = cv2.imread("turning_pictures/01. solidWhiteCurve.jpeg")
+image = cv2.imread("challenge.mp4")
 # convert to RGB
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 # convert to grayscale

@@ -3,7 +3,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-###https://flask-bcrypt.readthedocs.io/en/1.0.1/
+###https://flask-bcrypt.readthedocs.io/en/1.0.1/ or https://docs.python.org/3/library/hashlib.html
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))

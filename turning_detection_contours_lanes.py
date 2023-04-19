@@ -3,6 +3,8 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
+###https://flask-bcrypt.readthedocs.io/en/1.0.1/
+
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 

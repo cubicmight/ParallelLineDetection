@@ -94,10 +94,6 @@ def register():
 
 
 # Image processing
-import os
-import cv2
-# import matplotlib.pyplot as plt
-import numpy as np
 
 
 
@@ -106,7 +102,7 @@ def gen_frame():
     """Video streaming generator function."""
     global camera
     if not camera:
-        cap = cv2.VideoCapture(output)
+        cap = cv2.VideoCapture(0)
         camera = cap
     else:
         cap = camera

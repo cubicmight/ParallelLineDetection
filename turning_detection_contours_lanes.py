@@ -1,6 +1,6 @@
 import os
 import cv2
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 
 ###https://flask-bcrypt.readthedocs.io/en/1.0.1/ or https://docs.python.org/3/library/hashlib.html
@@ -8,7 +8,7 @@ import numpy as np
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-image_file_name = "videos/solidWhiteRight.mp4"
+image_file_name = "videos/solidWhiteRight_test.mp4"
 full_image_path = os.path.join(basedir, image_file_name)
 if not os.path.exists(full_image_path):
     print("cannot find image")
@@ -47,8 +47,8 @@ def interpolate(a1, a2, poly_deg=20.5, n_points=100, plot=True):
     new_a2_y = np.polyval(a2_coefs, new_a2_x)
     midx = [np.mean([new_a1_x[i], new_a2_x[i]]) for i in range(n_points)]
     midy = [np.mean([new_a1_y[i], new_a2_y[i]]) for i in range(n_points)]
-    if plot:
-        plt.plot(midx, midy, '--', c='black')
+    # if plot:
+        # plt.plot(midx, midy, '--', c='black')
 
     return np.array([[x, y] for x, y in zip(midx, midy)])
 
@@ -61,7 +61,7 @@ while True:
     format_video(frame)
     cv2.imshow('gray', gray)
     cv2.imshow('frame', output)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(100) & 0xFF == ord('q'):
         break
 
 

@@ -18,7 +18,7 @@ cap = cv2.VideoCapture(full_image_path)
 
 def format_video(cap):
     global output, gray
-    output = frame.copy()
+    output = cap.copy()
     gray = cv2.cvtColor(cap, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (5, 5), 0);
     gray = cv2.medianBlur(gray, 5)

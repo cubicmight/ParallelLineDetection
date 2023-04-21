@@ -11,6 +11,7 @@ from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from app.models import User, UserLogData
+from image_processing import image_processing
 
 current_direction_image = None
 camera = None
@@ -102,8 +103,34 @@ def gen_frame():
     """Video streaming generator function."""
     global camera
     if not camera:
-        cap = cv2.VideoCapture(0)
-        camera = cap
+        cap = cv2.VideoCapture('videos/solidWhiteRight_test.mp4')
+        gray = cv2.cvtColor(cap, cv2.COLOR_BGR2GRAY)
+        gray = cv2.GaussianBlur(gray, (5, 5), 0);
+        gray = cv2.medianBlur(gray, 5)
+        gray = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                     cv2.THRESH_BINARY, 11, 3.5)
+        kernel = np.ones((3, 3), np.uint8)
+        gray = cv2.erode(gray, kernel, iterations=1)
+        gray = cv2.dilate(gray, kernel, iterations=1)
+        # find the contours from the thresholded image
+        contours, hierarchy = cv2.findContours(gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        output = cv2.drawContours(cap, contours, -1, (0, 255, 0), 2)
+
+        a1 = contours[0][:, 0]
+        a2 = contours[1][:, 0]
+        # interpolate(a1, a2)
+
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                exit(-1)
+            cap.format_video(frame)
+            cv2.imshow('gray', gray)
+            cv2.imshow('frame', output)
+            if cv2.waitKey(1) & 0xFF == ord('s'):
+                break
+
+        cap.release()
     else:
         cap = camera
     while cap:

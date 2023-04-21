@@ -3,12 +3,12 @@ import cv2
 import numpy as np
 
 
-class image_processing():
+class image_processing:
 
-    def format_video(self):
+    def format_video(cap):
         global output, gray
-        cap = cv2.VideoCapture('videos/solidWhiteRight_test.mp4')
-        gray = cv2.cvtColor(cap, cv2.COLOR_BGR2GRAY)
+        input_video = cv2.VideoCapture(cap)
+        gray = cv2.cvtColor(input_video, cv2.COLOR_BGR2GRAY)
         gray = cv2.GaussianBlur(gray, (5, 5), 0);
         gray = cv2.medianBlur(gray, 5)
         gray = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
@@ -28,7 +28,7 @@ class image_processing():
             ret, frame = cap.read()
             if not ret:
                 exit(-1)
-            self.format_video(frame)
+            cap.format_video(frame)
             cv2.imshow('gray', gray)
             cv2.imshow('frame', output)
             if cv2.waitKey(1) & 0xFF == ord('s'):

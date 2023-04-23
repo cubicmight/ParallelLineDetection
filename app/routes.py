@@ -123,7 +123,7 @@ def gen_frame():
     if not camera:
         basedir = os.path.abspath(os.path.dirname(__file__))
 
-        image_file_name = "../videos/solidWhiteRight_test.mp4"
+        image_file_name = "../videos/lane detection.mp4"
         full_image_path = os.path.join(basedir, image_file_name)
         if not os.path.exists(full_image_path):
             print("cannot find image")
@@ -138,7 +138,7 @@ def gen_frame():
         (grabbed, frame) = cap.read()
         if grabbed:
             global current_direction_image
-            imgResult = cvzone.overlayPNG(format_video(frame), current_direction_image, [930, 500])  # 750, 400
+            imgResult = format_video(frame)  # 750, 400 , current_direction_image, [930, 500])
             ret, buffer = cv2.imencode('.jpg', imgResult)
 
             if ret:

@@ -1,3 +1,4 @@
+import glob
 import json
 import os.path
 import os
@@ -46,10 +47,30 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
+        details = {
+            "user": current_user.username.data,
+            "success": True,
+            "log-in": current_user + "has logged in"
+        }
+
+        r = json.dumps(details)
+        data = UserLogData(data=r)
+        db.session.add(data)
+        db.session.commit()
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
+        details = {
+            "user": form.username.data,
+            "success": True,
+            "log-in": form.username.data + "has logged in"
+        }
+
+        r = json.dumps(details)
+        data = UserLogData(data=r)
+        db.session.add(data)
+        db.session.commit()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
@@ -97,6 +118,7 @@ def register():
 
 
 # Image processing
+
 def format_video(cap):
     global output, gray
     output = cap.copy()
@@ -138,7 +160,8 @@ def gen_frame():
         (grabbed, frame) = cap.read()
         if grabbed:
             global current_direction_image
-            imgResult = format_video(frame)  # 750, 400 , current_direction_image, [930, 500])
+            # imgResult = cvzone.overlayPNG(format_video(frame), current_direction_image, (930, 500))
+            imgResult =  format_video(frame)
             ret, buffer = cv2.imencode('.jpg', imgResult)
 
             if ret:

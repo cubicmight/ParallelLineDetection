@@ -103,18 +103,23 @@ def make_points(image, average):
 
 '''##### DETECTING lane lines in image ######'''
 
-copy = np.copy(image1)
-edges = cv2.Canny(copy, 50, 150)
-isolated = region(edges)
-# cv2.imshow("edges", edges)
-# cv2.imshow("isolated", isolated)
-# cv2.waitKey(0)
 
-# DRAWING LINES: (order of params) --> region of interest, bin size (P, theta), min intersections needed, placeholder array,
-lines = cv2.HoughLinesP(isolated, 2, np.pi / 180, 100, np.array([]), minLineLength=40, maxLineGap=5)
-averaged_lines = average(copy, lines)
-black_lines = display_lines(copy, averaged_lines)
-# taking wighted sum of original image and lane lines image
-lanes = cv2.addWeighted(copy, 0.8, black_lines, 1, 1)
-cv2.imshow("lanes", lanes)
-cv2.waitKey(0)
+def detect_lanes():
+    global copy
+    copy = np.copy(image1)
+    edges = cv2.Canny(copy, 50, 150)
+    isolated = region(edges)
+    # cv2.imshow("edges", edges)
+    # cv2.imshow("isolated", isolated)
+    # cv2.waitKey(0)
+    # DRAWING LINES: (order of params) --> region of interest, bin size (P, theta), min intersections needed, placeholder array,
+    lines = cv2.HoughLinesP(isolated, 2, np.pi / 180, 100, np.array([]), minLineLength=40, maxLineGap=5)
+    averaged_lines = average(copy, lines)
+    black_lines = display_lines(copy, averaged_lines)
+    # taking wighted sum of original image and lane lines image
+    lanes = cv2.addWeighted(copy, 0.8, black_lines, 1, 1)
+    cv2.imshow("lanes", lanes)
+    cv2.waitKey(0)
+
+
+detect_lanes()

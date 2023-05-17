@@ -12,6 +12,7 @@ from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from app.models import User, UserLogData
+import math
 from image_processing import image_processing
 
 current_direction_image = None
@@ -119,6 +120,122 @@ def register():
 
 # Image processing
 
+
+def grey(image):
+    # convert to grayscale
+    image = np.asarray(image)
+    return cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+
+
+# Apply Gaussian Blur --> Reduce noise and smoothen image
+def gauss(image):
+    return cv2.GaussianBlur(image, (5, 5), 0)
+
+
+# outline the strongest gradients in the image --> this is where lines in the image are
+def canny(image):
+    edges = cv2.Canny(image, 50, 150)
+    return edges
+
+
+def region(image):
+    height, width = image.shape
+    # isolate the gradients that correspond to the lane lines
+    triangle = np.array([
+        [(100, height), (475, 325), (width, height)]
+    ])
+    # create a black image with the same dimensions as original image
+    mask = np.zeros_like(image)
+    # create a mask (triangle that isolates the region of interest in our image)
+    mask = cv2.fillPoly(mask, triangle, 255)
+    mask = cv2.bitwise_and(image, mask)
+    return mask
+
+
+def display_lines(image, lines):
+    lines_image = np.zeros_like(image)
+    # make sure array isn't empty
+    if lines is not None:
+        for line in lines:
+            x1, y1, x2, y2 = line
+            # draw lines on a black image
+            cv2.line(lines_image, (x1, y1), (x2, y2), (255, 0, 0), 10)
+    return lines_image
+
+
+def average(image, lines):
+    left = []
+    right = []
+
+    if lines is not None:
+        for line in lines:
+            print(line)
+            x1, y1, x2, y2 = line.reshape(4)
+            # fit line to points, return slope and y-int
+            parameters = np.polyfit((x1, x2), (y1, y2), 1)
+            print(parameters)
+            slope = parameters[0]
+            y_int = parameters[1]
+            # lines on the right have positive slope, and lines on the left have neg slope
+            if slope < 0:
+                left.append((slope, y_int))
+            else:
+                right.append((slope, y_int))
+
+    # takes average among all the columns (column0: slope, column1: y_int)
+    right_avg = np.average(right, axis=0)
+    left_avg = np.average(left, axis=0)
+    # create lines based on averages calculates
+    left_line = make_points(image, left_avg)
+    right_line = make_points(image, right_avg)
+    return np.array([left_line, right_line])
+
+
+def make_points(image, average):
+    print(average)
+    try:
+        slope, y_int = average
+    except TypeError:
+        slope, y_int = 0.001, 0
+    y1 = image.shape[0]
+    # how long we want our lines to be --> 3/5 the size of the image
+    y2 = int(y1 * (3 / 5))
+    # determine algebraically
+    # if math.isinf(int(slope)) == False:
+    #     x1 = int((y1 - y_int) // slope)
+    #     x2 = int((y2 - y_int) // slope)
+    #     return np.array([x1, y1, x2, y2])
+    # else:
+    #     pass
+
+    x1 = int((y1 - y_int) // slope)
+    x2 = int((y2 - y_int) // slope)
+    return np.array([x1, y1, x2, y2])
+
+
+
+
+'''##### DETECTING lane lines in image ######'''
+
+
+def detect_lanes(image1):
+    copy = np.copy(image1)
+    edges = cv2.Canny(copy, 50, 150)
+    isolated = region(edges)
+    # cv2.imshow("edges", edges)
+    # cv2.imshow("isolated", isolated)
+    # cv2.waitKey(0)
+    # DRAWING LINES: (order of params) --> region of interest, bin size (P, theta), min intersections needed, placeholder array,
+    lines = cv2.HoughLinesP(isolated, 2, np.pi / 180, 100, np.array([]), minLineLength=40, maxLineGap=5)
+    averaged_lines = average(copy, lines)
+    black_lines = display_lines(copy, averaged_lines)
+    # taking wighted sum of original image and lane lines image
+    lanes = cv2.addWeighted(copy, 0.8, black_lines, 1, 1)
+    return lanes
+    # cv2.imshow("lanes", lanes)
+    # cv2.waitKey(0)
+
+
 def format_video(cap):
     global output, gray
     output = cap.copy()
@@ -139,13 +256,51 @@ def format_video(cap):
     # interpolate(a1, a2)
     return output
 
+def lane_detection_2(frame):
+    image = frame.copy()
+
+    # Step 2: Reading the Image
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Step 3: Converting to Grayscale
+    blur = cv2.GaussianBlur(gray, (5, 5), 0)
+
+    # Step 4: Gaussian Blur
+    edges = cv2.Canny(blur, 50, 150)
+
+    # Step 5: Canny Edge Detection
+    height, width = image.shape[:2]
+    roi_vertices = [(0, height), (width / 2, height / 2), (width, height)]
+    mask_color = 255
+    mask = np.zeros_like(edges)
+    cv2.fillPoly(mask, np.array([roi_vertices], dtype=np.int32), mask_color)
+    masked_edges = cv2.bitwise_and(edges, mask)
+
+    # Step 6: Region of Interest
+    lines = cv2.HoughLinesP(masked_edges, rho=6, theta=np.pi / 60, threshold=160, minLineLength=40, maxLineGap=25)
+
+    # Step 7: Hough Transform
+    line_image = np.zeros_like(image)
+    for line in lines:
+        x1, y1, x2, y2 = line[0]
+        if y2 > 319:
+            if y1 > 319:
+                cv2.line(line_image, (x1, y1), (x2, y2), (0, 255, 0), 5)
+        else:
+            print("error")
+
+
+    # Step 8: Drawing the Lines
+    final_image = cv2.addWeighted(image, 0.8, line_image, 1, 0)
+    return final_image
+
 def gen_frame():
     """Video streaming generator function."""
     global camera
     if not camera:
         basedir = os.path.abspath(os.path.dirname(__file__))
 
-        image_file_name = "../videos/lane detection.mp4"
+        image_file_name = "../videos/solidYellowLeft.mp4"
         full_image_path = os.path.join(basedir, image_file_name)
         if not os.path.exists(full_image_path):
             print("cannot find image")
@@ -161,7 +316,7 @@ def gen_frame():
         if grabbed:
             global current_direction_image
             # imgResult = cvzone.overlayPNG(format_video(frame), current_direction_image, (930, 500))
-            imgResult =  format_video(frame)
+            imgResult = detect_lanes(frame)
             ret, buffer = cv2.imencode('.jpg', imgResult)
 
             if ret:

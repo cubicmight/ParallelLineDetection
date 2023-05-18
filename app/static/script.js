@@ -61,4 +61,8 @@ function addRow() {
 }
 
 
+function refresh_page() {
+    window.location.reload();
+};
+
 // setInterval(fetchlogs, 5000);

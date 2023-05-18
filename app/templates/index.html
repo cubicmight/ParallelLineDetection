@@ -8,6 +8,9 @@
             <h1>Video Stream</h1>
             <img class="center-block img-fluid" src="{{ url_for('video_feed') }}">
         </div>
+        <div class="col">
+            <button class="btn btn-primary" onclick=refresh_page() type="button">Replay Video</button>
+        </div>
     </div>
     <div class="p-5 row">
         <div class="col-sm-4 bg-light">
@@ -51,8 +54,6 @@
         </div>
         <div class="col">
             <button class="btn btn-primary" onclick=fetchlogs() type="button">Add Row</button>
-        </div>
-        <div class="col">
         </div>
     </div>
 </div>

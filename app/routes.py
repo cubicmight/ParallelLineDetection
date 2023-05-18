@@ -256,43 +256,6 @@ def format_video(cap):
     # interpolate(a1, a2)
     return output
 
-def lane_detection_2(frame):
-    image = frame.copy()
-
-    # Step 2: Reading the Image
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-    # Step 3: Converting to Grayscale
-    blur = cv2.GaussianBlur(gray, (5, 5), 0)
-
-    # Step 4: Gaussian Blur
-    edges = cv2.Canny(blur, 50, 150)
-
-    # Step 5: Canny Edge Detection
-    height, width = image.shape[:2]
-    roi_vertices = [(0, height), (width / 2, height / 2), (width, height)]
-    mask_color = 255
-    mask = np.zeros_like(edges)
-    cv2.fillPoly(mask, np.array([roi_vertices], dtype=np.int32), mask_color)
-    masked_edges = cv2.bitwise_and(edges, mask)
-
-    # Step 6: Region of Interest
-    lines = cv2.HoughLinesP(masked_edges, rho=6, theta=np.pi / 60, threshold=160, minLineLength=40, maxLineGap=25)
-
-    # Step 7: Hough Transform
-    line_image = np.zeros_like(image)
-    for line in lines:
-        x1, y1, x2, y2 = line[0]
-        if y2 > 319:
-            if y1 > 319:
-                cv2.line(line_image, (x1, y1), (x2, y2), (0, 255, 0), 5)
-        else:
-            print("error")
-
-
-    # Step 8: Drawing the Lines
-    final_image = cv2.addWeighted(image, 0.8, line_image, 1, 0)
-    return final_image
 
 def gen_frame():
     """Video streaming generator function."""
@@ -300,7 +263,7 @@ def gen_frame():
     if not camera:
         basedir = os.path.abspath(os.path.dirname(__file__))
 
-        image_file_name = "../videos/solidYellowLeft.mp4"
+        image_file_name = "../videos/solidWhiteRight_test.mp4"
         full_image_path = os.path.join(basedir, image_file_name)
         if not os.path.exists(full_image_path):
             print("cannot find image")
@@ -315,10 +278,8 @@ def gen_frame():
         (grabbed, frame) = cap.read()
         if grabbed:
             global current_direction_image
-            # imgResult = cvzone.overlayPNG(format_video(frame), current_direction_image, (930, 500))
-            imgResult = detect_lanes(frame)
+            imgResult = cvzone.overlayPNG(detect_lanes(frame), current_direction_image, (930, 500))
             ret, buffer = cv2.imencode('.jpg', imgResult)
-
             if ret:
                 convert = buffer.tobytes()
                 yield (b'--frame\r\n'

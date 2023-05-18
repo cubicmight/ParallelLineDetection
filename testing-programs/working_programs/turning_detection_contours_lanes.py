@@ -8,7 +8,7 @@ import numpy as np
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-image_file_name = "../videos/solidWhiteRight_test.mp4"
+image_file_name = "../../videos/solidWhiteRight_test.mp4"
 full_image_path = os.path.join(basedir, image_file_name)
 if not os.path.exists(full_image_path):
     print("cannot find image")

@@ -219,6 +219,11 @@ def make_points(image, average):
 
 
 def detect_lanes(image1):
+    ##filter for longest line
+    #create horizontal line between lines at the bottom and top
+    #find center of the horizontal line
+    #draw line through there
+    #do for each frame
     copy = np.copy(image1)
     edges = cv2.Canny(copy, 50, 150)
     isolated = region(edges)
@@ -227,20 +232,11 @@ def detect_lanes(image1):
     # cv2.waitKey(0)
     # DRAWING LINES: (order of params) --> region of interest, bin size (P, theta), min intersections needed, placeholder array,
     lines = cv2.HoughLinesP(isolated, 2, np.pi / 180, 100, np.array([]), minLineLength=40, maxLineGap=5)
-    longest_lines = sorted(lines, key=lambda x: x[0][2] - x[0][0], reverse=True)[:2]
-    x1, y1, x2, y2 = longest_lines[0][0]
-    x3, y3, x4, y4 = longest_lines[1][0]
-    center_x = int((x1 + x2 + x3 + x4) / 4)
-    center_y = int((y1 + y2 + y3 + y4) / 4)
-    print("Center line coordinate point 1: ({}, {})".format(center_x, center_y))
-    print(x1, x2, y1, y2)
     averaged_lines = average(copy, lines)
     black_lines = display_lines(copy, averaged_lines)
     # taking wighted sum of original image and lane lines image
-    cv2.line(copy, (x1, y1), (x2, y2), (0, 0, 255), 5)
-    # cv2.circle(copy, (652, 403), 25, (255, 0, 255), -1)
-    # cv2.circle(copy, (897, 539), 25, (255, 0, 255), -1)
     lanes = cv2.addWeighted(copy, 0.8, black_lines, 1, 1)
+    print('frame')
     return lanes
     # cv2.imshow("lanes", lanes)
     # cv2.waitKey(0)
@@ -267,6 +263,7 @@ def format_video(cap):
     return output
 
 
+
 def gen_frame():
     """Video streaming generator function."""
     global camera
@@ -288,7 +285,7 @@ def gen_frame():
         (grabbed, frame) = cap.read()
         if grabbed:
             global current_direction_image
-            imgResult = cvzone.overlayPNG(detect_lanes(frame), current_direction_image, (930, 500))
+            imgResult = cvzone.overlayPNG(detect_lanes(frame), current_direction_image, (900, 450))
             ret, buffer = cv2.imencode('.jpg', imgResult)
             if ret:
                 convert = buffer.tobytes()
